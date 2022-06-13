@@ -1,4 +1,4 @@
-import Phaser from 'phaser';
+import Phaser, { Math } from 'phaser';
 
 export default class Demo extends Phaser.Scene {
   cursors: any;
@@ -24,14 +24,20 @@ export default class Demo extends Phaser.Scene {
     this.player.setStrokeStyle(2, 0xefc53f);
     this.ball.body.setCircle(9)
     this.ball.body.setCollideWorldBounds(true);
-    this.ball.body.setFrictionX(500);
+    this.ball.body.setDragX(100);
+    this.ball.body.setDragY(100);
     this.ball.body.setBounce(0.6)
+
+    this.physics.overlap(this.player, this.ball)
   }
 
   update(time: number, delta: number): void {
     this.player.body.setVelocity(0);
-    if(this.cursors.space.isDown){
-      this.ball.body.setVelocityX(500);
+    if(this.cursors.space.isDown && !this.player.body.touching.none){
+      console.log(this.player.body.touching);
+      console.log(this.player.body.wasTouching);
+      let angle = Math.Angle.BetweenPoints(this.player, this.ball);
+      this.physics.velocityFromRotation(angle, 500, this.ball.body.velocity);
     }
     if (this.cursors.left.isDown) {
       this.player.body.setVelocityX(-100);
